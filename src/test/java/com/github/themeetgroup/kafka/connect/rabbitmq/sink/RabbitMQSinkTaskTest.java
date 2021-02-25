@@ -20,13 +20,17 @@ class RabbitMQSinkTaskTest {
     @Test
     public void testStart() throws IOException, TimeoutException {
 
+        String queue = "test_queue";
+        String routingKey = "test_routing_key";
+        String exchange = "exchange";
+
         RabbitMQSinkTask sinkTask = new RabbitMQSinkTask();
-        createExchangeAndQueue();
-        sinkTask.start(createSettings());
-        assertTrue(getBindings().stream()
-                .filter(n -> n.get("source").equals("data"))
+        createExchangeAndQueue(exchange, queue);
+        sinkTask.start(createSettings(exchange, queue, routingKey));
+        assertTrue(getBindings(queue).stream()
+                .filter(n -> n.get("source").equals(exchange))
                 .map(v -> v.get("routing_key"))
-                .anyMatch(t -> t.equals("test_routing_key")));
+                .anyMatch(t -> t.equals(routingKey)));
     }
 
     private List<Map<String, Object>> inputStreamToList(InputStream is) throws IOException {
@@ -35,7 +39,7 @@ class RabbitMQSinkTaskTest {
         return mapper.readValue(is, List.class);
     }
 
-    private void createExchangeAndQueue() throws IOException, TimeoutException {
+    private void createExchangeAndQueue(String exchange, String queue) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUsername("django");
         factory.setPassword("django");
@@ -46,14 +50,14 @@ class RabbitMQSinkTaskTest {
         Connection conn = factory.newConnection();
         Channel channel = conn.createChannel();
 
-        channel.exchangeDeclare("data", "direct");
-        channel.queueDeclare("test_queue", true, false, false, null);
+        channel.exchangeDeclare(exchange, "direct");
+        channel.queueDeclare(queue, true, false, false, null);
         channel.close();
         conn.close();
 
     }
 
-    private HashMap<String, String> createSettings() {
+    private HashMap<String, String> createSettings(String exchange, String queue, String routingKey) {
         HashMap<String, String> settings = new HashMap<>();
         settings.put("connector.class", "com.github.themeetgroup.kafka.connect.rabbitmq.sink.RabbitMQSinkConnector");
         settings.put("tasks.max", "3");
@@ -63,7 +67,7 @@ class RabbitMQSinkTaskTest {
         settings.put("rabbitmq.host", "localhost");
         settings.put("rabbitmq.port", "5672");
         settings.put("rabbitmq.username", "django");
-        settings.put("rabbitmq.exchange", "data");
+        settings.put("rabbitmq.exchange", exchange);
         settings.put("rabbitmq.virtual.host", "depop-local");
         settings.put("rabbitmq.ssl", "false");
         settings.put("rabbitmq.delivery.mode", "PERSISTENT");
@@ -74,13 +78,13 @@ class RabbitMQSinkTaskTest {
         settings.put("errors.deadletterqueue.topic.replication.factor", "3");
         settings.put("topics", "test_topic");
         settings.put("rabbitmq.password", "django");
-        settings.put("rabbitmq.routing.key", "test_routing_key");
-        settings.put("rabbitmq.queue.name", "test_queue");
+        settings.put("rabbitmq.routing.key", routingKey);
+        settings.put("rabbitmq.queue.name", queue);
         return settings;
     }
 
-    private List<Map<String, Object>> getBindings() throws IOException {
-        URL url = new URL("http://localhost:15672/api/queues/depop-local/test_queue/bindings/?username=django&password=django");
+    private List<Map<String, Object>> getBindings(String queue) throws IOException {
+        URL url = new URL(String.format("http://localhost:15672/api/queues/depop-local/%s/bindings/?username=django&password=django", queue));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Authorization", "Basic ZGphbmdvOmRqYW5nbw==");
