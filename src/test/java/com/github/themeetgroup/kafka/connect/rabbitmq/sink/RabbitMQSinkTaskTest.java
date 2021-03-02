@@ -1,6 +1,7 @@
 package com.github.themeetgroup.kafka.connect.rabbitmq.sink;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
 import java.net.HttpURLConnection;
@@ -13,25 +14,34 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.testcontainers.containers.DockerComposeContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import java.util.concurrent.TimeUnit;
 
 
+@Testcontainers
 class RabbitMQSinkTaskTest {
 
     @Test
-    public void testStart() throws IOException, TimeoutException {
+    void testStart() throws IOException, TimeoutException, InterruptedException {
+        TimeUnit.SECONDS.sleep(20);
 
         String queue = "test_queue";
         String routingKey = "test_routing_key";
-        String exchange = "exchange";
 
         RabbitMQSinkTask sinkTask = new RabbitMQSinkTask();
-        createExchangeAndQueue(exchange, queue);
-        sinkTask.start(createSettings(exchange, queue, routingKey));
+        createQueue(queue);
+        sinkTask.start(createSettings(queue, routingKey));
         assertTrue(getBindings(queue).stream()
-                .filter(n -> n.get("source").equals(exchange))
+                .filter(n -> n.get("source").equals("data"))
                 .map(v -> v.get("routing_key"))
                 .anyMatch(t -> t.equals(routingKey)));
     }
+
+    @Container
+    private static DockerComposeContainer environment =
+            new DockerComposeContainer(new File("src/test/java/com/github/themeetgroup/kafka/connect/rabbitmq/sink/docker-compose.yaml"));
 
     private List<Map<String, Object>> inputStreamToList(InputStream is) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -39,7 +49,7 @@ class RabbitMQSinkTaskTest {
         return mapper.readValue(is, List.class);
     }
 
-    private void createExchangeAndQueue(String exchange, String queue) throws IOException, TimeoutException {
+    private void createQueue(String queue) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUsername("django");
         factory.setPassword("django");
@@ -50,14 +60,13 @@ class RabbitMQSinkTaskTest {
         Connection conn = factory.newConnection();
         Channel channel = conn.createChannel();
 
-        channel.exchangeDeclare(exchange, "direct");
         channel.queueDeclare(queue, true, false, false, null);
         channel.close();
         conn.close();
 
     }
 
-    private HashMap<String, String> createSettings(String exchange, String queue, String routingKey) {
+    private HashMap<String, String> createSettings(String queue, String routingKey) {
         HashMap<String, String> settings = new HashMap<>();
         settings.put("connector.class", "com.github.themeetgroup.kafka.connect.rabbitmq.sink.RabbitMQSinkConnector");
         settings.put("tasks.max", "3");
@@ -67,7 +76,7 @@ class RabbitMQSinkTaskTest {
         settings.put("rabbitmq.host", "localhost");
         settings.put("rabbitmq.port", "5672");
         settings.put("rabbitmq.username", "django");
-        settings.put("rabbitmq.exchange", exchange);
+        settings.put("rabbitmq.exchange", "data");
         settings.put("rabbitmq.virtual.host", "depop-local");
         settings.put("rabbitmq.ssl", "false");
         settings.put("rabbitmq.delivery.mode", "PERSISTENT");
