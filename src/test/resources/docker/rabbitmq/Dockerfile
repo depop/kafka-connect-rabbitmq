@@ -6,5 +6,5 @@ RUN rabbitmq-plugins enable --offline rabbitmq_shovel
 
 ADD scripts/wait-for-it.sh /wait-for-it.sh
 ADD scripts/entrypoint.sh /entrypoint.sh
-
+RUN chmod +x /entrypoint.sh
 CMD ["/entrypoint.sh"]

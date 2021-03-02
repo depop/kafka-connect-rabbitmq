@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -41,7 +42,7 @@ class RabbitMQSinkTaskTest {
 
     @Container
     private static DockerComposeContainer environment =
-            new DockerComposeContainer(new File("src/test/java/com/github/themeetgroup/kafka/connect/rabbitmq/sink/docker-compose.yaml"));
+            new DockerComposeContainer(new File("src/test/resources/docker-compose.yaml"));
 
     private List<Map<String, Object>> inputStreamToList(InputStream is) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
