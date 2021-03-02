@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  rabbitmq:
+    build: docker/rabbitmq
+    hostname: rabbitmq
+    ports:
+      - 5671:5671
+      - 5672:5672
+      - 4369:4369
+      - 15672:15672
+    networks:
+      - localnet
+networks:
+  localnet:
+    driver: bridge
