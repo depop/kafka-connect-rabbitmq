@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.themeetgroup.kafka.connect</groupId>
     <artifactId>kafka-connect-rabbitmq</artifactId>
-    <version>0.1.0</version>
+    <version>0.3.0</version>
     <name>kafka-connect-rabbitmq</name>
     <description>A Kafka Connect connector reading and writing data from RabbitMQ.</description>
     <url>https://github.com/themeetgroup/kafka-connect-rabbitmq</url>
