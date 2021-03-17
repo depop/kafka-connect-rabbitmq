@@ -66,7 +66,7 @@ public class RabbitMQSinkTask extends SinkTask {
   public void start(Map<String, String> settings) {
     this.config = new RabbitMQSinkConnectorConfig(settings);
     this.recordFormatter = RecordFormatter.getInstance(config.format);
-    ConnectionFactory connectionFactory = this.config.connectionFagit ctory();
+    ConnectionFactory connectionFactory = this.config.connectionFactory();
     try {
       log.info("Opening connection to {}:{}/{} (SSL: {})", this.config.host, this.config.port, this.config.virtualHost, this.config.useSsl);
       this.connection = connectionFactory.newConnection();
