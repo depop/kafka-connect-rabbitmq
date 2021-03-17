@@ -66,7 +66,7 @@ public class RabbitMQSinkTask extends SinkTask {
   public void start(Map<String, String> settings) {
     this.config = new RabbitMQSinkConnectorConfig(settings);
     this.recordFormatter = RecordFormatter.getInstance(config.format);
-    ConnectionFactory connectionFactory = this.config.connectionFactory();
+    ConnectionFactory connectionFactory = this.config.connectionFagit ctory();
     try {
       log.info("Opening connection to {}:{}/{} (SSL: {})", this.config.host, this.config.port, this.config.virtualHost, this.config.useSsl);
       this.connection = connectionFactory.newConnection();
@@ -77,8 +77,6 @@ public class RabbitMQSinkTask extends SinkTask {
     try {
       log.info("Creating Channel");
       this.channel = this.connection.createChannel();
-      log.info("Creating binding");
-      this.channel.queueBind(this.config.queueName, this.config.exchange, this.config.routingKey);
     } catch (IOException e) {
       throw new ConnectException(e);
     }
