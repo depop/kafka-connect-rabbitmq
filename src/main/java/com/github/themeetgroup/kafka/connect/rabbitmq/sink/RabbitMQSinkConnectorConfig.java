@@ -43,15 +43,11 @@ public class RabbitMQSinkConnectorConfig extends CommonRabbitMQConnectorConfig {
 
   public static final String HEADER_CONF = "rabbitmq.headers";
   public static final String HEADER_CONF_DOC = "Headers to set for outbounf messages. Set with `headername1`:`headervalue1`,`headername2`:`headervalue2`";
-  
-  public static final String QUEUE_NAME = "rabbitmq.queue.name";
-  public static final String QUEUE_NAME_DOC = "Name of the queue to bind to using routing key";
 
   public final StructTemplate kafkaTopic;
   public final String exchange;
   public final String routingKey;
   public final String format;
-  public final String queueName;
 
   public RabbitMQSinkConnectorConfig(Map<String, String> settings) {
     super(config(), settings);
@@ -61,7 +57,6 @@ public class RabbitMQSinkConnectorConfig extends CommonRabbitMQConnectorConfig {
     this.exchange = this.getString(EXCHANGE_CONF);
     this.routingKey = this.getString(ROUTING_KEY_CONF);
     this.format = this.getString(FORMAT_CONF);
-    this.queueName = this.getString(QUEUE_NAME);
   }
 
   public static ConfigDef config() {
@@ -70,7 +65,6 @@ public class RabbitMQSinkConnectorConfig extends CommonRabbitMQConnectorConfig {
             .define(EXCHANGE_CONF, ConfigDef.Type.STRING, "", ConfigDef.Importance.MEDIUM, EXCHANGE_DOC)
             .define(ROUTING_KEY_CONF, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, ROUTING_KEY_DOC)
             .define(FORMAT_CONF, ConfigDef.Type.STRING, FORMAT_CONF_DEFAULT, ConfigDef.Importance.HIGH, FORMAT_CONF_DOC)
-            .define(HEADER_CONF, ConfigDef.Type.STRING, null, null, ConfigDef.Importance.LOW, HEADER_CONF_DOC)
-            .define(QUEUE_NAME, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, QUEUE_NAME_DOC);
+            .define(HEADER_CONF, ConfigDef.Type.STRING, null, null, ConfigDef.Importance.LOW, HEADER_CONF_DOC);
   }
 }
