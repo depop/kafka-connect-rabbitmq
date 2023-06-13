@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.themeetgroup.kafka.connect</groupId>
     <artifactId>kafka-connect-rabbitmq</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>kafka-connect-rabbitmq</name>
     <description>A Kafka Connect connector reading and writing data from RabbitMQ.</description>
     <url>https://github.com/themeetgroup/kafka-connect-rabbitmq</url>
@@ -26,6 +26,19 @@
         <repository>
             <id>Confluent</id>
             <url>https://packages.confluent.io/maven/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <layout>default</layout>
+            <url>https://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Palantir</id>
+            <url>https://dl.bintray.com/palantir/releases/</url>
         </repository>
     </repositories>
 
@@ -123,7 +136,26 @@
             <version>1.15.2</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.palantir.docker.compose</groupId>
+            <artifactId>docker-compose-junit-jupiter</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.palantir.docker.compose</groupId>
+            <artifactId>docker-compose-rule-junit4</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.palantir.docker.compose</groupId>
+            <artifactId>docker-compose-rule-core</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jcustenborder</groupId>
+            <artifactId>docker-compose-junit-extension</artifactId>
+            <version>0.1.6</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -207,21 +239,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.1</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>checkstyle</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>
