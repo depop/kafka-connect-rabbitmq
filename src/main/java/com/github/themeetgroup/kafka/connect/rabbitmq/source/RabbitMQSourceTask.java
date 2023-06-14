@@ -67,10 +67,6 @@ public class RabbitMQSourceTask extends SourceTask {
     try {
       log.info("Creating Channel");
       this.channel = this.connection.createChannel();
-      log.info("Declaring queues");
-      for (String queue : config.queues) {
-        this.channel.queueDeclare(queue, true, false, false, null);
-      }
     } catch (IOException e) {
       throw new ConnectException(e);
     }

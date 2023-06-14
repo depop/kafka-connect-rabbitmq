@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <mirrors>
+        <mirror>
+            <id>Confluent-http-unblocker</id>
+            <mirrorOf>Confluent</mirrorOf>
+            <name></name>
+            <url>https://packages.confluent.io/maven/</url>
+        </mirror>
+        <mirror>
+            <id>maven-http-unblocker</id>
+            <mirrorOf>central</mirrorOf>
+            <name></name>
+            <url>https://repo1.maven.org/maven2</url>
+        </mirror>
+        <mirror>
+            <id>Palantir-http-unblocker</id>
+            <mirrorOf>Palantir</mirrorOf>
+            <name></name>
+            <url>https://dl.bintray.com/palantir/releases/</url>
+        </mirror>
+    </mirrors>
+</settings>
