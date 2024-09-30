@@ -99,7 +99,7 @@ public class RabbitMQSourceTask extends SourceTask {
     List<SourceRecord> batch = new ArrayList<>(4096);
 
     while (!this.records.drain(batch)) {
-      Thread.sleep(1000);
+      Thread.sleep(100);
     }
 
     return batch;
