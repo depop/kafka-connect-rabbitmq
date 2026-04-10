@@ -21,6 +21,8 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.header.Headers;
 
+import java.util.Map;
+
 import static com.github.themeetgroup.kafka.connect.rabbitmq.source.data.MessageConverter.basicProperties;
 
 public class BytesSourceMessageConverter implements SourceMessageConverter<String, byte[]> {
@@ -47,6 +49,18 @@ public class BytesSourceMessageConverter implements SourceMessageConverter<Strin
 
   @Override
   public Headers headers(String consumerTag, Envelope envelope, AMQP.BasicProperties basicProperties, byte[] body) {
-    return new ConnectHeaders().addStruct("amqp", basicProperties(basicProperties));
+    ConnectHeaders headers = new ConnectHeaders();
+    headers.addStruct("amqp", basicProperties(basicProperties));
+
+    // Promote individual AMQP headers to top-level Kafka record headers
+    if (basicProperties.getHeaders() != null) {
+      for (Map.Entry<String, Object> entry : basicProperties.getHeaders().entrySet()) {
+        if (entry.getValue() != null) {
+          headers.addString(entry.getKey(), entry.getValue().toString());
+        }
+      }
+    }
+
+    return headers;
   }
 }
